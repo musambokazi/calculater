@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        :root{ --gap:8px; --btn-size:64px; }
+        body{ font-family: system-ui, Arial, sans-serif; display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; background:#f6f7fb }
+        .calculator{ background:#fff; padding:16px; border-radius:12px; box-shadow:0 6px 20px rgba(10,20,40,0.08) }
+        .display{ width:100%; padding:12px; font-size:1.5rem; text-align:right; margin-bottom:16px; border:1px solid #e6e8ef; border-radius:8px; background:#f9fafb }
+        .keypad{ display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:var(--gap); width: calc(var(--btn-size)*3 + var(--gap)*2); }
+        .keypad button{ height:var(--btn-size); font-size:1.25rem; border-radius:8px; border:1px solid #e6e8ef; background:#fff; cursor:pointer }
+        .keypad button.operator{ background:#f0f4ff }
+        .keypad button.zero{ grid-column: 1 / span 2 }
+        .visually-hidden{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap }
+        @media (max-width:420px){ :root{ --btn-size:54px } .keypad{ width:auto } }
+    </style>
+</head>
+<body>
+    <main class="calculator" aria-label="Calculator">
+        <input type="text" id="display" class="display" readonly placeholder="0" aria-label="Calculator display">
+        <section class="keypad" role="group" aria-label="Calculator keypad">
+            <button type="button" class="key operator">C</button>
+            <button type="button" class="key operator">←</button>
+            <button type="button" class="key operator">÷</button>
+
+            <button type="button" class="key">7</button>
+            <button type="button" class="key">8</button>
+            <button type="button" class="key">9</button>
+
+            <button type="button" class="key">4</button>
+            <button type="button" class="key">5</button>
+            <button type="button" class="key">6</button>
+
+            <button type="button" class="key">1</button>
+            <button type="button" class="key">2</button>
+            <button type="button" class="key">3</button>
+
+            <button type="button" class="key zero">0</button>
+            <button type="button" class="key">.</button>
+            <button type="button" class="key operator">=</button>
+
+            <button type="button" class="key operator">−</button>
+            <button type="button" class="key operator">+</button>
+        </section>
+    </main>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentValue = '';
+        let previousValue = '';
+        let operation = null;
+
+        function updateDisplay() {
+            display.value = currentValue || '0';
+        }
+
+        function clearAll() {
+            currentValue = '';
+            previousValue = '';
+            operation = null;
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            currentValue = currentValue.slice(0, -1);
+            updateDisplay();
+        }
+
+        function appendNumber(num) {
+            if (num === '.' && currentValue.includes('.')) return;
+            currentValue += num;
+            updateDisplay();
+        }
+
+        function setOperation(op) {
+            if (currentValue === '') return;
+            if (previousValue !== '') {
+                calculate();
+            }
+            operation = op;
+            previousValue = currentValue;
+            currentValue = '';
+        }
+
+        function calculate() {
+            if (!previousValue || !currentValue || !operation) return;
+            let result;
+            const prev = parseFloat(previousValue);
+            const current = parseFloat(currentValue);
+
+            switch(operation) {
+                case '+': result = prev + current; break;
+                case '−': result = prev - current; break;
+                case '÷': result = prev / current; break;
+                case '×': result = prev * current; break;
+                default: return;
+            }
+
+            currentValue = result.toString();
+            operation = null;
+            previousValue = '';
+            updateDisplay();
+        }
+
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', () => {
+                const text = button.textContent.trim();
+
+                if (text === 'C') clearAll();
+                else if (text === '←') deleteLast();
+                else if (text === '=') calculate();
+                else if (['+', '−', '÷', '×'].includes(text)) setOperation(text);
+                else appendNumber(text);
+            });
+        });
+
+        updateDisplay();
+    </script>
+</body>
+</html>
