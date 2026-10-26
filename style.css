@@ -1,0 +1,74 @@
+:root {
+    --gap: 8px;
+    --btn-size: 64px;
+}
+
+body {
+    font-family: system-ui, Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background: #f6f7fb;
+}
+
+.calculator {
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(10, 20, 40, 0.08);
+}
+
+.display {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.5rem;
+    text-align: right;
+    margin-bottom: 16px;
+    border: 1px solid #e6e8ef;
+    border-radius: 8px;
+    background: #f9fafb;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap);
+    width: calc(var(--btn-size) * 3 + var(--gap) * 2);
+}
+
+.keypad button {
+    height: var(--btn-size);
+    font-size: 1.25rem;
+    border-radius: 8px;
+    border: 1px solid #e6e8ef;
+    background: #fff;
+    cursor: pointer;
+}
+
+.keypad button.operator {
+    background: #f0f4ff;
+}
+
+.keypad button.zero {
+    grid-column: 1 / span 2;
+}
+
+.visually-hidden {
+    position: absolute !important;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+    :root {
+        --btn-size: 54px;
+    }
+    .keypad {
+        width: auto;
+    }
+}
